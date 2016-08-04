@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:../build/ios/tangram.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:tangram_demo.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:tangram_framework.xcodeproj">
+   </FileRef>
+</Workspace>
