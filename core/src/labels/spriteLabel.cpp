@@ -3,6 +3,7 @@
 #include "gl/dynamicQuadMesh.h"
 #include "style/pointStyle.h"
 #include "view/view.h"
+#include "util/geom.h"
 #include "platform.h"
 #include "log.h"
 
@@ -28,7 +29,8 @@ void SpriteLabel::applyAnchor(LabelProperty::Anchor _anchor) {
     m_anchor = LabelProperty::anchorDirection(_anchor) * m_dim * 0.5f;
 }
 
-bool SpriteLabel::updateScreenTransform(const glm::mat4& _mvp, const ViewState& _viewState, bool _drawAllLabels) {
+// <<<<<<< ce24cabe6cee196fa6827e9ca7409a440c85c4f6
+bool SpriteLabel::updateScreenTransform(const glm::mat4& _mvp, const ViewState& _viewState, ScreenTransform& _transform, bool _drawAllLabels) {
 
     glm::vec2 halfScreen = glm::vec2(_viewState.viewportSize * 0.5f);
 
@@ -99,12 +101,38 @@ bool SpriteLabel::updateScreenTransform(const glm::mat4& _mvp, const ViewState& 
         default:
             break;
     }
+// =======
+// bool SpriteLabel::updateScreenTransform(const glm::mat4& _mvp, const glm::vec2& _screenSize,
+//                                         bool _testVisibility, ScreenTransform& _transform) {
+
+//     bool clipped = false;
+//     glm::vec2 p0 = m_transform.modelPosition1;
+
+//     glm::vec2 screenPosition = worldToScreenSpace(_mvp, glm::vec4(p0, 0.0, 1.0),
+//                                                   _screenSize, clipped);
+
+//     if (_testVisibility && clipped) { return false; }
+
+//     screenPosition += m_anchor;
+//     screenPosition.x += m_options.offset.x;
+//     screenPosition.y -= m_options.offset.y;
+
+//     m_transform.state.screenPos = screenPosition;
+// >>>>>>> wip: curved labels
 
     return true;
 }
 
-void SpriteLabel::updateBBoxes(float _zoomFract) {
-    glm::vec2 dim;
+void SpriteLabel::obbs(const ScreenTransform& _transform, std::vector<OBB>& _obbs,
+                       Range& _range, bool _append) {
+
+    if (_append) { _range.start = int(_obbs.size()); }
+    _range.length = 1;
+
+    //glm::vec2 sp = m_transform.state.screenPos;
+    glm::vec2 dim = m_dim + glm::vec2(m_extrudeScale * 2.f); // * _zoomFract);
+
+    OBB obb;
 
     if (m_options.flat) {
         static float infinity = std::numeric_limits<float>::infinity();
@@ -127,17 +155,26 @@ void SpriteLabel::updateBBoxes(float _zoomFract) {
 
         glm::vec2 obbCenter = glm::vec2((minx + maxx) * 0.5f, (miny + maxy) * 0.5f);
 
-        m_obb = OBB(obbCenter, glm::vec2(1.0, 0.0), dim.x, dim.y);
+        obb = OBB(obbCenter, glm::vec2(1.0, 0.0), dim.x, dim.y);
     } else {
-        dim = m_dim + glm::vec2(m_extrudeScale * 2.f * _zoomFract);
+        //dim = m_dim + glm::vec2(m_extrudeScale * 2.f * _zoomFract);
+        dim = m_dim;
 
         if (m_occludedLastFrame) { dim += Label::activation_distance_threshold; }
 
-        m_obb = OBB(m_screenTransform.position, m_screenTransform.rotation, dim.x, dim.y);
+        obb = OBB(m_screenTransform.position, m_screenTransform.rotation, dim.x, dim.y);
+    }
+
+    //auto obb = OBB(sp, m_transform.state.rotation, dim.x, dim.y);
+
+    if (_append) {
+        _obbs.push_back(obb);
+    } else {
+        _obbs[_range.start] = obb;
     }
 }
 
-void SpriteLabel::addVerticesToMesh() {
+void SpriteLabel::addVerticesToMesh(ScreenTransform& _transform) {
 
     if (!visibleState()) { return; }
 
