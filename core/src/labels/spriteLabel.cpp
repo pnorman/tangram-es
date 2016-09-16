@@ -4,6 +4,7 @@
 #include "style/pointStyle.h"
 #include "view/view.h"
 #include "platform.h"
+#include "log.h"
 
 namespace Tangram {
 
