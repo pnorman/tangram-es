@@ -204,5 +204,6 @@ TEST_CASE( "Test anchor fallback behavior", "[Labels][AnchorFallback]" ) {
     }
 
 }
+#endif
 
 }
