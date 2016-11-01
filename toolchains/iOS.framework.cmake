@@ -41,13 +41,13 @@ set(SOURCES
     ${PROJECT_SOURCE_DIR}/core/common/platform_gl.cpp
     ${PROJECT_SOURCE_DIR}/ios/src/platform_ios.mm
     ${PROJECT_SOURCE_DIR}/ios/src/Helpers.mm
+    ${PROJECT_SOURCE_DIR}/ios/src/CGFontConverter.mm
     ${PROJECT_SOURCE_DIR}/ios/src/TGGeoPolyline.mm
     ${PROJECT_SOURCE_DIR}/ios/src/TGGeoPolygon.mm
     ${PROJECT_SOURCE_DIR}/ios/src/TGMapViewController.mm)
 
 set(FRAMEWORK_HEADERS
     ${PROJECT_SOURCE_DIR}/ios/framework/TangramMap.h
-    ${PROJECT_SOURCE_DIR}/ios/src/Helpers.h
     ${PROJECT_SOURCE_DIR}/ios/src/TGGeoPolyline.h
     ${PROJECT_SOURCE_DIR}/ios/src/TGGeoPolygon.h
     ${PROJECT_SOURCE_DIR}/ios/src/TGGeoPoint.h
@@ -55,6 +55,8 @@ set(FRAMEWORK_HEADERS
 
 set(HEADERS
     ${PROJECT_SOURCE_DIR}/ios/src/platform_ios.h
+    ${PROJECT_SOURCE_DIR}/ios/src/Helpers.h
+    ${PROJECT_SOURCE_DIR}/ios/src/CGFontConverter.h
     ${FRAMEWORK_HEADERS})
 
 add_bundle_resources(RESOURCES "${PROJECT_SOURCE_DIR}/scenes/fonts" "./fonts")
