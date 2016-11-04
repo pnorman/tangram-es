@@ -133,6 +133,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super loadSceneFileAsync:@"https://tangrams.github.io/walkabout-style/walkabout-style.yaml"];
+    //[super loadSceneFileAsync:@"scene.yaml"];
 }
 
 - (void)viewDidLoad

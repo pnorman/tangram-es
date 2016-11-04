@@ -140,7 +140,8 @@ layers:
                 visible: true
                 priority: 2
                 font:
-                    family: sans-serif
+                    # family: sans-serif
+                    family: Helvetica
                     weight: 400
                     style: normal
                     size: 1.em
