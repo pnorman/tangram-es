@@ -1,6 +1,7 @@
 #ifdef PLATFORM_IOS
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <utility>
 #import <cstdio>
 #import <cstdarg>
@@ -142,10 +143,43 @@ std::string systemFontFallbackPath(int _importance, int _weightHint) {
 }
 
 unsigned char* systemFont(const std::string& _name, const std::string& _weight, const std::string& _face, size_t* _size) {
-    // TODO: use weight and face params
+    // TODO: use weight param
 
-    NSString* fontName = [NSString stringWithUTF8String:_name.c_str()];
-    CGFontRef fontRef = CGFontCreateWithFontName((CFStringRef)fontName);
+    UIFont* font = [UIFont fontWithName:[NSString stringWithUTF8String:_name.c_str()] size:0.0];
+
+    if (font == nil) {
+        // Get the default system font
+        font = [UIFont systemFontOfSize:0.0];
+    }
+
+    UIFontDescriptorSymbolicTraits traits;
+    UIFontDescriptor* descriptor = [font fontDescriptor];
+
+    if (_face != "normal") {
+        // TODO: cache matching
+
+        if (_face == "italic") {
+            traits = UIFontDescriptorTraitItalic;
+        } else if (_face == "bold") {
+            traits = UIFontDescriptorTraitBold;
+        } else if (_face == "expanded") {
+            traits = UIFontDescriptorTraitExpanded;
+        } else if (_face == "condensed") {
+            traits = UIFontDescriptorTraitCondensed;
+        } else if (_face == "monospace") {
+            traits = UIFontDescriptorTraitMonoSpace;
+        }
+
+        // Create a new descriptor with the symbolic traits
+        UIFontDescriptor* newDescriptor = [descriptor fontDescriptorWithSymbolicTraits:traits];
+
+        if (newDescriptor != nil) {
+            descriptor = newDescriptor;
+            font = [UIFont fontWithDescriptor:descriptor size:0.0];
+        }
+    }
+
+    CGFontRef fontRef = CGFontCreateWithFontName((CFStringRef)font.fontName);
 
     if (!fontRef) {
         *_size = 0;
