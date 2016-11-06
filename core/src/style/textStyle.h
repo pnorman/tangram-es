@@ -65,7 +65,6 @@ public:
               Blending _blendMode = Blending::overlay, GLenum _drawMode = GL_TRIANGLES, bool _selection = true);
 
     void constructVertexLayout() override;
-    void constructShaderProgram() override;
 
     /* Create the LabelMeshes associated with FontContext GlyphTexture<s>
      * No GL involved, called from Tangram::update()
@@ -94,6 +93,9 @@ public:
     virtual size_t dynamicMeshSize() const override;
 
     virtual ~TextStyle() override;
+
+    void buildFragmentShaderSource(ShaderSource& _out) override;
+    void buildVertexShaderSource(ShaderSource& _out, bool _selectionPass) override;
 
 private:
 
