@@ -145,6 +145,12 @@ std::string systemFontFallbackPath(int _importance, int _weightHint) {
 unsigned char* systemFont(const std::string& _name, const std::string& _weight, const std::string& _face, size_t* _size) {
     // TODO: use weight param
 
+    if (_weight == "400") {
+        // "normal" face;
+    } else if (_weight == "700") {
+        // "bold" face
+    }
+
     UIFont* font = [UIFont fontWithName:[NSString stringWithUTF8String:_name.c_str()] size:0.0];
 
     if (font == nil) {
@@ -152,30 +158,31 @@ unsigned char* systemFont(const std::string& _name, const std::string& _weight, 
         font = [UIFont systemFontOfSize:0.0];
     }
 
-    UIFontDescriptorSymbolicTraits traits;
-    UIFontDescriptor* descriptor = [font fontDescriptor];
+    NSString* weightTrait = UIFontWeightTrait;
 
     if (_face != "normal") {
-        // TODO: cache matching
+        UIFontDescriptorSymbolicTraits traits;
+        UIFontDescriptor* descriptor = [font fontDescriptor];
 
-        if (_face == "italic") {
-            traits = UIFontDescriptorTraitItalic;
-        } else if (_face == "bold") {
-            traits = UIFontDescriptorTraitBold;
-        } else if (_face == "expanded") {
-            traits = UIFontDescriptorTraitExpanded;
-        } else if (_face == "condensed") {
-            traits = UIFontDescriptorTraitCondensed;
-        } else if (_face == "monospace") {
-            traits = UIFontDescriptorTraitMonoSpace;
-        }
+        static std::map<std::string, UIFontDescriptorSymbolicTraits> fontTraits = {
+            {"italic", UIFontDescriptorTraitItalic},
+            {"oblique", UIFontDescriptorTraitItalic},
+            {"bold", UIFontDescriptorTraitBold},
+            {"expanded", UIFontDescriptorTraitExpanded},
+            {"condensed", UIFontDescriptorTraitCondensed},
+            {"monospace", UIFontDescriptorTraitMonoSpace},
+        };
 
-        // Create a new descriptor with the symbolic traits
-        UIFontDescriptor* newDescriptor = [descriptor fontDescriptorWithSymbolicTraits:traits];
+        auto it = fontTraits.find(_face);
+        if (it != fontTraits.end()) {
+            traits = it->second;
 
-        if (newDescriptor != nil) {
-            descriptor = newDescriptor;
-            font = [UIFont fontWithDescriptor:descriptor size:0.0];
+            // Create a new descriptor with the symbolic traits
+            descriptor = [descriptor fontDescriptorWithSymbolicTraits:traits];
+
+            if (descriptor != nil) {
+                font = [UIFont fontWithDescriptor:descriptor size:0.0];
+            }
         }
     }
 
