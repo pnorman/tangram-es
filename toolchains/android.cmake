@@ -34,8 +34,3 @@ target_compile_options(${LIB_NAME}
   PUBLIC
   -fPIC)
 
-# install to android library dir
-set(LIB_INSTALLATION_PATH ${CMAKE_SOURCE_DIR}/android/tangram/libs/${ANDROID_ABI})
-
-
-install(TARGETS ${LIB_NAME} DESTINATION ${LIB_INSTALLATION_PATH})
